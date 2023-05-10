@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include=".vs\VSWorkspaceState.json" />
+    <Content Include="bin\Debug\net6.0\WorkshopImproved.deps.json" />
+    <Content Include="bin\Debug\net6.0\WorkshopImproved.runtimeconfig.json" />
+    <Content Include="bin\Debug\net6.0\WorkshopImproved.staticwebassets.runtime.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -16,7 +23,66 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include=".vs\Bookstore\FileContentIndex\merges\" />
+    <Folder Include=".vs\Bookstore_finished\FileContentIndex\merges\" />
+    <Folder Include=".vs\Bookstore_finished\v17\" />
+    <Folder Include=".vs\sd\6ba77be7-0c4f-411b-b82a-08cf87802957\" />
+    <Folder Include=".vs\WorkshopImproved\FileContentIndex\merges\" />
+    <Folder Include=".vs\WorkshopImproved\v17\" />
+    <Folder Include="bin\Debug\net6.0\cs\" />
+    <Folder Include="bin\Debug\net6.0\de\" />
+    <Folder Include="bin\Debug\net6.0\es\" />
+    <Folder Include="bin\Debug\net6.0\fr\" />
+    <Folder Include="bin\Debug\net6.0\it\" />
+    <Folder Include="bin\Debug\net6.0\ja\" />
+    <Folder Include="bin\Debug\net6.0\ko\" />
+    <Folder Include="bin\Debug\net6.0\pl\" />
+    <Folder Include="bin\Debug\net6.0\pt-BR\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\browser\lib\net6.0\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\unix\lib\net6.0\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.1\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win-arm64\native\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win-arm\native\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win-x64\native\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win-x86\native\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win\lib\net6.0\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.1\" />
+    <Folder Include="bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\" />
+    <Folder Include="bin\Debug\net6.0\ru\" />
+    <Folder Include="bin\Debug\net6.0\tr\" />
+    <Folder Include="bin\Debug\net6.0\zh-Hans\" />
+    <Folder Include="bin\Debug\net6.0\zh-Hant\" />
+    <Folder Include="bin\Release\net6.0\" />
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".vs\Bookstore\config\applicationhost.config" />
+    <None Include=".vs\Bookstore\DesignTimeBuild\.dtbcache.v2" />
+    <None Include=".vs\Bookstore\FileContentIndex\684f8bc0-9be7-4fca-8b31-4e0c10a0c753.vsidx" />
+    <None Include=".vs\Bookstore\FileContentIndex\ca7b866b-f72e-403f-9635-02681c73e1a6.vsidx" />
+    <None Include=".vs\Bookstore\FileContentIndex\e9306fb1-c0aa-406a-a15c-fc13e481d0cd.vsidx" />
+    <None Include=".vs\Bookstore\FileContentIndex\fdaff146-4117-4d49-b905-e9b83283b9af.vsidx" />
+    <None Include=".vs\Bookstore\FileContentIndex\read.lock" />
+    <None Include=".vs\Bookstore\v17\.futdcache.v2" />
+    <None Include=".vs\Bookstore_finished\FileContentIndex\53ea625b-42af-46e5-a144-7290e02e8a1b.vsidx" />
+    <None Include=".vs\Bookstore_finished\FileContentIndex\a1b3c353-1957-46c1-aed6-63b5031b0fd2.vsidx" />
+    <None Include=".vs\Bookstore_finished\FileContentIndex\f68d2399-bd32-4628-9457-a80bf24654f2.vsidx" />
+    <None Include=".vs\Bookstore_finished\FileContentIndex\read.lock" />
+    <None Include=".vs\ProjectEvaluation\bookstore.metadata.v6.1" />
+    <None Include=".vs\ProjectEvaluation\bookstore.projects.v6.1" />
+    <None Include=".vs\ProjectEvaluation\workshopimproved.metadata.v6.1" />
+    <None Include=".vs\ProjectEvaluation\workshopimproved.projects.v6.1" />
+    <None Include=".vs\slnx.sqlite" />
+    <None Include=".vs\WorkshopImproved\DesignTimeBuild\.dtbcache.v2" />
+    <None Include=".vs\WorkshopImproved\FileContentIndex\42943f65-cdc5-43af-a12d-dde49b3be13d.vsidx" />
+    <None Include=".vs\WorkshopImproved\FileContentIndex\8ebaa72a-48d0-415c-af7b-cf100938de25.vsidx" />
+    <None Include=".vs\WorkshopImproved\FileContentIndex\ab1202cf-6451-4917-8386-121c111f67a6.vsidx" />
+    <None Include=".vs\WorkshopImproved\FileContentIndex\bd44c014-a2e1-4cdb-9494-397eddf9164b.vsidx" />
+    <None Include=".vs\WorkshopImproved\FileContentIndex\read.lock" />
+    <None Include="bin\Debug\net6.0\WorkshopImproved.dll" />
+    <None Include="bin\Debug\net6.0\WorkshopImproved.exe" />
+    <None Include="bin\Debug\net6.0\WorkshopImproved.pdb" />
   </ItemGroup>
 
 </Project>
