@@ -9,26 +9,7 @@ namespace Bookstore.Controllers
         public BufferedFileUploadController(IBufferedFileUploadService bufferedFileUploadService)
         {
             _bufferedFileUploadService = bufferedFileUploadService;
-        }/*
-        private List<SelectListItem> GetUploadedFiles()
-        {
-            var folderPath = "C:\\Users\\User\\Desktop\\Bookstore\\UploadedFiles\\";
-            var folder = new DirectoryInfo(folderPath);
-            var files = folder.GetFiles();
-
-            var selectList = files.Select(file => new SelectListItem
-            {
-                Value = file.Name,
-                Text = file.Name
-            }).ToList();
-
-            return selectList;
         }
-        public IActionResult Create()
-        {
-            ViewBag.UploadedFiles = GetUploadedFiles();
-            return View();
-        }*/
         public IActionResult Index()
         {
             return View();

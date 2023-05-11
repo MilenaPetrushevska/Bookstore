@@ -9,7 +9,7 @@ namespace Bookstore.Models
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            
+
         }
 
     }
