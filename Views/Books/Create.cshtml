@@ -1,85 +1,87 @@
-﻿@model Bookstore.ViewModels.BookGenresCreateViewModel
+﻿@model Bookstore.ViewModels.BookViewModel
+
 @{
     ViewData["Title"] = "Create";
 }
-
 <h1>Create</h1>
 
 <h4>Book</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Book.Title" class="control-label"></label>
-                <input asp-for="Book.Title" class="form-control" />
-                <span asp-validation-for="Book.Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Book.YearPublished" class="control-label"></label>
-                <input asp-for="Book.YearPublished" class="form-control" />
-                <span asp-validation-for="Book.YearPublished" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Book.NumPages" class="control-label"></label>
-                <input asp-for="Book.NumPages" class="form-control" />
-                <span asp-validation-for="Book.NumPages" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Book.Description" class="control-label"></label>
-                <input asp-for="Book.Description" class="form-control" />
-                <span asp-validation-for="Book.Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Book.Publisher" class="control-label"></label>
-                <input asp-for="Book.Publisher" class="form-control" />
-                <span asp-validation-for="Book.Publisher" class="text-danger"></span>
-            </div>
+<div class="col-md-4">
+    <div >
+        <div >
+            <form enctype="multipart/form-data" asp-action="Create">
+                        <div class="form-group">
+                            <label asp-for="Title" class="control-label"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="YearPublished" class="control-label"></label>
+                            <input asp-for="YearPublished" class="form-control" />
+                            <span asp-validation-for="YearPublished" class="text-danger"></span>
+                        </div>
+               
+                        <div class="form-group">
+                            <label asp-for="NumPages" class="control-label"></label>
+                            <input asp-for="NumPages" class="form-control">
+                            <span asp-validation-for="NumPages" class="text-danger"></span>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                
+                        <div class="form-group">
+                            <label asp-for="Publisher" class="control-label"></label>
+                            <input asp-for="Publisher" class="form-control" />
+                            <span asp-validation-for="Publisher" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="FrontPagee" class="control-label"></label>
+                            <div class="custom-file">
+                                <input asp-for="FrontPagee" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                            <span asp-validation-for="FrontPagee" class="text-danger"></span>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label asp-for="DownloadUrll" class="control-label"></label>
+                            <div class="custom-file">
+                                <input asp-for="DownloadUrll" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                            <span asp-validation-for="DownloadUrll" class="text-danger"></span>
+                        </div>
+                
+                        <div class="form-group">
+                            <label asp-for="AuthorId" class="control-label"></label>
+                            <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Genres" class="control-label"></label>
+                            <select asp-for="Genres" class="form-control" asp-items="ViewBag.Genres"></select>
+                        </div>
 
-            <div class="form-group">
-                <label asp-for="Book.FrontPage" class="control-label"></label>
-                <input asp-for="Book.FrontPage" class="form-control" />
-                <span asp-validation-for="Book.FrontPage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Book.DownloadUrl" class="control-label"></label>
-                <input asp-for="Book.DownloadUrl" class="form-control" />
-                <span asp-validation-for="Book.DownloadUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Book.AuthorId" class="control-label"></label>
-                <select asp-for="Book.AuthorId" class ="form-control" asp-items="ViewBag.AuthorId"></select>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Book.Genres" class="control-label"></label>
-                <select asp-for="Book.Genres" class="form-control" asp-items="ViewBag.Genres"></select>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <a asp-action="Index" > Back to List</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#SelectedGenres").select2();
+@section scripts{
+    <script type="text/javascript">
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
     </script>
-}
-
-
+    }

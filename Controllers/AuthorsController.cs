@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Bookstore.Data;
 using Bookstore.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Bookstore.Controllers
 {
@@ -20,6 +22,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Authors
+
         public async Task<IActionResult> Index(string searchName, string searchSurname, string searchNationality)
         {
 
@@ -39,7 +42,7 @@ namespace Bookstore.Controllers
             if (!string.IsNullOrEmpty(searchNationality))
             {
                 authors = authors.Where(c => c.Nationality.Contains(searchNationality));
-            } 
+            }
 
 
             return View(await authors.ToListAsync());
@@ -65,6 +68,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Authors/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -75,6 +79,7 @@ namespace Bookstore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,BirthDate,Nationality,Gender")] Author author)
         {
             if (ModelState.IsValid)
@@ -87,6 +92,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Authors/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Author == null)
@@ -107,6 +113,7 @@ namespace Bookstore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,BirthDate,Nationality,Gender")] Author author)
         {
             if (id != author.Id)
@@ -138,6 +145,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Authors/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Author == null)
@@ -158,25 +166,26 @@ namespace Bookstore.Controllers
         // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Author == null)
             {
-                return Problem("Entity set 'BookstoreContext.Author'  is null.");
+                return Problem("Entity set 'WorkshopImprovedContext.Author'  is null.");
             }
             var author = await _context.Author.FindAsync(id);
             if (author != null)
             {
                 _context.Author.Remove(author);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AuthorExists(int id)
         {
-          return (_context.Author?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Author?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

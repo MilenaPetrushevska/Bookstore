@@ -22,246 +22,496 @@ namespace Bookstore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Bookstore.Models.Author", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                b.Property<string>("Name")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                b.Property<string>("NormalizedName")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("Gender")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                b.HasKey("Id");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                b.HasIndex("NormalizedName")
+                    .IsUnique()
+                    .HasDatabaseName("RoleNameIndex")
+                    .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.Property<string>("Nationality")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                b.ToTable("AspNetRoles", (string)null);
+            });
 
-                    b.HasKey("Id");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    b.ToTable("Author");
-                });
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-            modelBuilder.Entity("Bookstore.Models.Book", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                b.Property<string>("ClaimType")
+                    .HasColumnType("nvarchar(max)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<string>("ClaimValue")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
+                b.Property<string>("RoleId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                b.HasKey("Id");
 
-                    b.Property<string>("DownloadUrl")
-                        .HasColumnType("nvarchar(max)");
+                b.HasIndex("RoleId");
 
-                    b.Property<string>("FrontPage")
-                        .HasColumnType("nvarchar(max)");
+                b.ToTable("AspNetRoleClaims", (string)null);
+            });
 
-                    b.Property<int>("NumPages")
-                        .HasColumnType("int");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    b.Property<string>("Publisher")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                b.Property<string>("ClaimType")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("YearPublished")
-                        .HasColumnType("int");
+                b.Property<string>("ClaimValue")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("AuthorId");
+                b.HasKey("Id");
 
-                    b.ToTable("Book");
-                });
+                b.HasIndex("UserId");
 
-            modelBuilder.Entity("Bookstore.Models.BookGenre", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                b.ToTable("AspNetUserClaims", (string)null);
+            });
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            {
+                b.Property<string>("LoginProvider")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
+                b.Property<string>("ProviderKey")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
+                b.Property<string>("ProviderDisplayName")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("BookId");
+                b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("GenreId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("BookGenre");
-                });
+                b.ToTable("AspNetUserLogins", (string)null);
+            });
 
-            modelBuilder.Entity("Bookstore.Models.Genre", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<string>("RoleId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("GenreName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                b.HasKey("UserId", "RoleId");
 
-                    b.HasKey("Id");
+                b.HasIndex("RoleId");
 
-                    b.ToTable("Genre");
-                });
+                b.ToTable("AspNetUserRoles", (string)null);
+            });
 
-            modelBuilder.Entity("Bookstore.Models.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<string>("LoginProvider")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AppUser")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("Name")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
+                b.Property<string>("Value")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Comment")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                b.ToTable("AspNetUserTokens", (string)null);
+            });
 
-                    b.HasKey("Id");
+            modelBuilder.Entity("Bookstore.Areas.Identity.Data.BookstoreUser", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("BookId");
+                b.Property<int>("AccessFailedCount")
+                    .HasColumnType("int");
 
-                    b.ToTable("Review");
-                });
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .HasColumnType("nvarchar(max)");
 
-            modelBuilder.Entity("Bookstore.Models.UserBooks", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                b.Property<string>("Email")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<bool>("EmailConfirmed")
+                    .HasColumnType("bit");
 
-                    b.Property<string>("AppUser")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                b.Property<bool>("LockoutEnabled")
+                    .HasColumnType("bit");
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
+                b.Property<DateTimeOffset?>("LockoutEnd")
+                    .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                b.Property<string>("NormalizedEmail")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasIndex("BookId");
+                b.Property<string>("NormalizedUserName")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.ToTable("UserBooks");
-                });
+                b.Property<string>("PasswordHash")
+                    .HasColumnType("nvarchar(max)");
 
-            modelBuilder.Entity("Bookstore.Models.Book", b =>
-                {
-                    b.HasOne("Bookstore.Models.Author", "Author")
-                        .WithMany("Books")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.Property<string>("PhoneNumber")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Navigation("Author");
-                });
+                b.Property<bool>("PhoneNumberConfirmed")
+                    .HasColumnType("bit");
 
-            modelBuilder.Entity("Bookstore.Models.BookGenre", b =>
-                {
-                    b.HasOne("Bookstore.Models.Book", "Book")
-                        .WithMany("Genres")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.Property<string>("SecurityStamp")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasOne("Bookstore.Models.Genre", "Genre")
-                        .WithMany("Books")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.Property<bool>("TwoFactorEnabled")
+                    .HasColumnType("bit");
 
-                    b.Navigation("Book");
+                b.Property<string>("UserName")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Navigation("Genre");
-                });
+                b.HasKey("Id");
 
-            modelBuilder.Entity("Bookstore.Models.Review", b =>
-                {
-                    b.HasOne("Bookstore.Models.Book", "Book")
-                        .WithMany("Reviews")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasIndex("NormalizedEmail")
+                    .HasDatabaseName("EmailIndex");
 
-                    b.Navigation("Book");
-                });
+                b.HasIndex("NormalizedUserName")
+                    .IsUnique()
+                    .HasDatabaseName("UserNameIndex")
+                    .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-            modelBuilder.Entity("Bookstore.Models.UserBooks", b =>
-                {
-                    b.HasOne("Bookstore.Models.Book", "Book")
-                        .WithMany("Buyers")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
+                b.ToTable("AspNetUsers", (string)null);
+            });
 
             modelBuilder.Entity("Bookstore.Models.Author", b =>
-                {
-                    b.Navigation("Books");
-                });
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<DateTime>("BirthDate")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("FirstName")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.Property<string>("Gender")
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.Property<string>("LastName")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.Property<string>("Nationality")
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.HasKey("Id");
+
+                b.ToTable("Author");
+            });
 
             modelBuilder.Entity("Bookstore.Models.Book", b =>
-                {
-                    b.Navigation("Buyers");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    b.Navigation("Genres");
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Navigation("Reviews");
-                });
+                b.Property<int>("AuthorId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Description")
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("DownloadUrl")
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("FrontPage")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<int>("NumPages")
+                    .HasColumnType("int");
+
+                b.Property<string>("Publisher")
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
+
+                b.Property<int>("YearPublished")
+                    .HasColumnType("int");
+
+                b.HasKey("Id");
+
+                b.HasIndex("AuthorId");
+
+                b.ToTable("Book");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.BookGenre", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<int>("BookId")
+                    .HasColumnType("int");
+
+                b.Property<int>("GenreId")
+                    .HasColumnType("int");
+
+                b.HasKey("Id");
+
+                b.HasIndex("BookId");
+
+                b.HasIndex("GenreId");
+
+                b.ToTable("BookGenre");
+            });
 
             modelBuilder.Entity("Bookstore.Models.Genre", b =>
-                {
-                    b.Navigation("Books");
-                });
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<string>("GenreName")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("nvarchar(50)");
+
+                b.HasKey("Id");
+
+                b.ToTable("Genre");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.Review", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<string>("AppUser")
+                    .IsRequired()
+                    .HasMaxLength(450)
+                    .HasColumnType("nvarchar(450)");
+
+                b.Property<int>("BookId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Comment")
+                    .HasMaxLength(500)
+                    .HasColumnType("nvarchar(500)");
+
+                b.Property<int>("Rating")
+                    .HasColumnType("int");
+
+                b.HasKey("Id");
+
+                b.HasIndex("BookId");
+
+                b.ToTable("Review");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.UserBooks", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                b.Property<string>("AppUser")
+                    .IsRequired()
+                    .HasMaxLength(450)
+                    .HasColumnType("nvarchar(450)");
+
+                b.Property<int>("BookId")
+                    .HasColumnType("int");
+
+                b.HasKey("Id");
+
+                b.HasIndex("BookId");
+
+                b.ToTable("UserBooks");
+            });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            {
+                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    .WithMany()
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            {
+                b.HasOne("Bookstore.Areas.Identity.Data.BookstoreUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            {
+                b.HasOne("Bookstore.Areas.Identity.Data.BookstoreUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            {
+                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    .WithMany()
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Bookstore.Areas.Identity.Data.BookstoreUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            {
+                b.HasOne("Bookstore.Areas.Identity.Data.BookstoreUser", null)
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity("Bookstore.Models.Book", b =>
+            {
+                b.HasOne("Bookstore.Models.Author", "Author")
+                    .WithMany("Books")
+                    .HasForeignKey("AuthorId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Author");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.BookGenre", b =>
+            {
+                b.HasOne("Bookstore.Models.Book", "Book")
+                    .WithMany("Genres")
+                    .HasForeignKey("BookId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Bookstore.Models.Genre", "Genre")
+                    .WithMany("Books")
+                    .HasForeignKey("GenreId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Book");
+
+                b.Navigation("Genre");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.Review", b =>
+            {
+                b.HasOne("Bookstore.Models.Book", "Book")
+                    .WithMany("Reviews")
+                    .HasForeignKey("BookId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Book");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.UserBooks", b =>
+            {
+                b.HasOne("Bookstore.Models.Book", "Book")
+                    .WithMany("Buyers")
+                    .HasForeignKey("BookId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Book");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.Author", b =>
+            {
+                b.Navigation("Books");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.Book", b =>
+            {
+                b.Navigation("Buyers");
+
+                b.Navigation("Genres");
+
+                b.Navigation("Reviews");
+            });
+
+            modelBuilder.Entity("Bookstore.Models.Genre", b =>
+            {
+                b.Navigation("Books");
+            });
 #pragma warning restore 612, 618
         }
     }

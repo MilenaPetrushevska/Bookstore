@@ -19,37 +19,44 @@ using System.Collections.ObjectModel;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.IO;
+using System.Drawing;
+using System.Security.Policy;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Bookstore.Models;
+using Bookstore.ViewModels;
 
 namespace Bookstore.Controllers
 {
     public class BooksController : Controller
     {
         private readonly BookstoreContext _context;
-        readonly IBufferedFileUploadService _bufferedFileUploadService;
-        private readonly IWebHostEnvironment webHostEnvironment;
-        private BookViewModel model;
 
-        public BooksController(BookstoreContext context, IBufferedFileUploadService bufferedFileUploadService, IWebHostEnvironment hostEnvironment)
+        private readonly IWebHostEnvironment webHostEnvironment;
+
+        public BooksController(BookstoreContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
-            _bufferedFileUploadService = bufferedFileUploadService;
+
             webHostEnvironment = hostEnvironment;
         }
 
         // GET: Books
-        public async Task<IActionResult> Index(string searchString, string searchGenre)
+
+        public async Task<IActionResult> Index(string searchString, string searchGenre, string searchName, string searchSurname)
         {
 
             var workshopImprovedContext = _context.Book.Include(b => b.Author).Include(b => b.Reviews).Include(b => b.Genres).ThenInclude(b => b.Genre);
             var zanroviContext = _context.BookGenre.Include(b => b.Genre).Include(b => b.Book);
             var books = from m in workshopImprovedContext
-                         select m;
+                        select m;
             var zanrovis = from n in zanroviContext select n;
 
             if (!String.IsNullOrEmpty(searchString))
             {
-              books = books.Where(s => s.Title!.Contains(searchString));
-  
+                books = books.Where(s => s.Title!.Contains(searchString));
+
             }
 
             if (!String.IsNullOrEmpty(searchGenre))
@@ -57,16 +64,27 @@ namespace Bookstore.Controllers
                 zanrovis = zanrovis.Where(s => s.Genre.GenreName!.Contains(searchGenre));
                 var innerJoinQuery =
                  from m in books
-                 join n in zanrovis on m.Id equals n.BookId select new { m };
+                 join n in zanrovis on m.Id equals n.BookId
+                 select new { m };
                 ArrayList lista = new ArrayList();
 
-                 foreach (var ownerAndPet in innerJoinQuery)
+                foreach (var bookAndGenre in innerJoinQuery)
                 {
- 
-                    lista.Add(ownerAndPet.m);
+
+                    lista.Add(bookAndGenre.m);
                 }
 
                 ViewBag.lista = lista;
+            }
+
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                books = books.Where(s => s.Author.FirstName.Contains(searchName));
+            }
+
+            if (!string.IsNullOrEmpty(searchSurname))
+            {
+                books = books.Where(x => x.Author.LastName.Contains(searchSurname));
             }
 
 
@@ -75,6 +93,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Books/Details/5
+        //  [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -84,7 +103,7 @@ namespace Bookstore.Controllers
             }
 
             var book = await _context.Book
-                .Include(b => b.Author).Include(b => b.Genres).ThenInclude(b => b.Genre)
+                .Include(b => b.Author).Include(b => b.Reviews).Include(b => b.Genres).ThenInclude(b => b.Genre)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (book == null)
             {
@@ -95,43 +114,125 @@ namespace Bookstore.Controllers
         }
 
         // GET: Books/Create
-        
-        public async Task<IActionResult> CreateAsync(IFormFile file, [Bind("Id,Title,YearPublished,NumPages,Description,Publisher,FrontPage,DownloadUrl,AuthorId,Genres")] Book book)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateAsync(Book book)
         {
 
+
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorId);
+            // ViewData["i"] = 0;
             //ViewBag.GenreList = _context.Set<Genre>();
             ViewData["Genres"] = new MultiSelectList(_context.Set<Genre>(), "Id", "GenreName");
             //product.Categories = new MultiSelectList(list, "ID", "Name", cat.CategorySelected.Select(c => c.ID).ToArray());
 
             return View();
-   
+
         }
 
-        // POST: Books/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        
-        public async Task<IActionResult> Create([Bind("Id,Title,YearPublished,NumPages,Description,Publisher,FrontPage,DownloadUrl,AuthorId,Genres")] Book book, int[] genres, IFormCollection col)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromForm] BookViewModel model)
         {
 
             if (ModelState.IsValid)
             {
+
+                string uniqueFileName = UploadedFile(model);
+                string uniqueFileNamee = UploadedPdf(model);
+
+                Book book = new Book
+                {
+                    Title = model.Title,
+                    YearPublished = model.YearPublished,
+                    NumPages = model.NumPages,
+                    Description = model.Description,
+                    Publisher = model.Publisher,
+                    FrontPage = uniqueFileName,
+                    DownloadUrl = uniqueFileNamee,
+                    AuthorId = model.AuthorId
+                };
                 _context.Add(book);
-               // FrontPage = uniqueFileName;
+
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorId);
-            ViewData["Genres"] = new MultiSelectList(_context.Set<Genre>(), "Id", "GenreName", book.Genres);
-            return View(book);
-
+            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", model.AuthorId);
+            // ViewData["i"] = 0;
+            return View();
         }
+
+        //   [HttpPost]
         
+
+
+
+        public async Task<IActionResult> GetPdf(string url)
+        {
+            var path = Path.Combine(
+            Directory.GetCurrentDirectory(), "wwwroot/pdfs/" + url);
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, "application/pdf", "Demo.pdf");
+        }
+
+
+
+
+        private string UploadedFile(BookViewModel model)
+        {
+            string uniqueFileName = null;
+            string uniqueFileNamee = null;
+
+            if (model.FrontPagee != null)
+            {
+                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.FrontPagee.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.FrontPagee.CopyTo(fileStream);
+                    // = Image.FromStream(fileStream);
+                    //  var image = Image.FromStream(fileStream);
+
+                }
+            }
+
+
+            return uniqueFileName;
+        }
+
+
+
+        private string UploadedPdf(BookViewModel model)
+        {
+
+            string uniqueFileNamee = null;
+
+            if (model.DownloadUrll != null)
+            {
+                string uploadsFolderr = Path.Combine(webHostEnvironment.WebRootPath, "pdfs");
+                uniqueFileNamee = Guid.NewGuid().ToString() + "_" + model.DownloadUrll.FileName;
+                string filePathh = Path.Combine(uploadsFolderr, uniqueFileNamee);
+                using (var fileStreamm = new FileStream(filePathh, FileMode.Create))
+                {
+                    model.DownloadUrll.CopyTo(fileStreamm);
+                }
+            }
+
+            return uniqueFileNamee;
+        }
+
+
         // GET: Books/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Book == null)
@@ -159,29 +260,62 @@ namespace Bookstore.Controllers
 
 
             ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", book.AuthorId);
+            //ViewData["i"] = 1;
             return View(viewmodel);
-           // return View(book);
+            // return View(book);
         }
+
 
         // POST: Books/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, BookGenresEditViewModel viewmodel)
         {
-            //[Bind("Id,Title,YearPublished,NumPages,Description,Publisher,FrontPage,DownloadUrl,AuthorId")] Book book
-          //  if (id != book.Id)
-          if(id != viewmodel.Book.Id)
-            {
-                return NotFound();
-            }
+            if (id != viewmodel.Book.Id) { return NotFound(); }
+
+            //  string uniqueFileName = null;
+            // viewmodel.Book.FrontPage = "70ce3980-ef41-44a1-bac0-9784f2e554b5_kniga.jpg";
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // _context.Update(book);
+
+                    string uniqueFileName = null;  //to contain the filename
+                    if (viewmodel.slika != null)  //handle iformfile
+                    {
+                        string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                        uniqueFileName = viewmodel.slika.FileName;
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            viewmodel.slika.CopyTo(fileStream);
+                        }
+                    }
+
+                    viewmodel.Book.FrontPage = uniqueFileName; //fill the image property
+
+
+                    string uniqueFileNamee = null;
+
+                    if (viewmodel.url != null)
+                    {
+                        string uploadsFolderr = Path.Combine(webHostEnvironment.WebRootPath, "pdfs");
+                        uniqueFileNamee = Guid.NewGuid().ToString() + "_" + viewmodel.url.FileName;
+                        string filePathh = Path.Combine(uploadsFolderr, uniqueFileNamee);
+                        using (var fileStreamm = new FileStream(filePathh, FileMode.Create))
+                        {
+                            viewmodel.url.CopyTo(fileStreamm);
+                        }
+                    }
+
+
+                    viewmodel.Book.DownloadUrl = uniqueFileNamee;
+
                     _context.Update(viewmodel.Book);
                     await _context.SaveChangesAsync();
 
@@ -204,24 +338,21 @@ namespace Bookstore.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                   // if (!BookExists(book.Id))
-                   if(!BookExists(viewmodel.Book.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!BookExists(viewmodel.Book.Id)) { return NotFound(); }
+                    else { throw; }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<Author>(), "Id", "FirstName", viewmodel.Book.AuthorId);
-            // return View(book);
+            
+            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "FullName", viewmodel.Book.AuthorId);
+            // ViewData["i"] = 1;
             return View(viewmodel);
         }
 
+
+
         // GET: Books/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Book == null)
@@ -242,6 +373,7 @@ namespace Bookstore.Controllers
 
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -254,14 +386,14 @@ namespace Bookstore.Controllers
             {
                 _context.Book.Remove(book);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
         {
-          return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

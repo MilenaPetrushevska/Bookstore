@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Bookstore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +25,9 @@ namespace Bookstore.Controllers
         // GET: Genres
         public async Task<IActionResult> Index()
         {
-              return _context.Genre != null ? 
-                          View(await _context.Genre.ToListAsync()) :
-                          Problem("Entity set 'BookstoreContext.Genre'  is null.");
+            return _context.Genre != null ?
+                        View(await _context.Genre.ToListAsync()) :
+                        Problem("Entity set 'WorkshopImprovedContext.Genre'  is null.");
         }
 
         // GET: Genres/Details/5
@@ -46,6 +49,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Genres/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +60,7 @@ namespace Bookstore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,GenreName")] Genre genre)
         {
             if (ModelState.IsValid)
@@ -68,6 +73,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Genres/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Genre == null)
@@ -88,6 +94,7 @@ namespace Bookstore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,GenreName")] Genre genre)
         {
             if (id != genre.Id)
@@ -119,6 +126,7 @@ namespace Bookstore.Controllers
         }
 
         // GET: Genres/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Genre == null)
@@ -137,27 +145,28 @@ namespace Bookstore.Controllers
         }
 
         // POST: Genres/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Genre == null)
             {
-                return Problem("Entity set 'BookstoreContext.Genre'  is null.");
+                return Problem("Entity set 'WorkshopImprovedContext.Genre'  is null.");
             }
             var genre = await _context.Genre.FindAsync(id);
             if (genre != null)
             {
                 _context.Genre.Remove(genre);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool GenreExists(int id)
         {
-          return (_context.Genre?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Genre?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

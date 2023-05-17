@@ -1,5 +1,4 @@
-﻿
-@model Bookstore.ViewModels.BookGenresEditViewModel
+﻿@model Bookstore.ViewModels.BookGenresEditViewModel
 @{
     ViewData["Title"] = "Edit";
 }
@@ -10,7 +9,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+
+        <form enctype="multipart/form-data" asp-controller="Books" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Book.Id" />
             <div class="form-group">
@@ -38,16 +38,30 @@
                 <input asp-for="Book.Publisher" class="form-control" />
                 <span asp-validation-for="Book.Publisher" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Book.FrontPage" class="control-label"></label>
                 <input asp-for="Book.FrontPage" class="form-control" />
                 <span asp-validation-for="Book.FrontPage" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Book.DownloadUrl" class="control-label"></label>
-                <input asp-for="Book.DownloadUrl" class="form-control" />
-                <span asp-validation-for="Book.DownloadUrl" class="text-danger"></span>
+                <label asp-for="slika" class="control-label">Front Page</label>
+                <div class="custom-file">
+                    <input asp-for="slika" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <span asp-validation-for="slika" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="url" class="control-label">Url</label>
+                <div class="custom-file">
+                    <input asp-for="url" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <span asp-validation-for="url" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Book.AuthorId" class="control-label"></label>
                 <select asp-for="Book.AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
@@ -65,6 +79,7 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+
     </div>
 </div>
 
@@ -73,12 +88,14 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
-        $("#SelectedGenres").select2();
+            $("#SelectedGenres").select2();
         });
     </script>
 }

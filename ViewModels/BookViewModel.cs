@@ -1,5 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ViewEngines;
+using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
+using Bookstore.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Bookstore.Models;
 
 namespace Bookstore.ViewModels
@@ -22,13 +28,17 @@ namespace Bookstore.ViewModels
         [StringLength(50)]
         public string? Publisher { get; set; }
 
-        [Required(ErrorMessage = "Please choose front page image of the book.")]
+        
+
+        [Required(ErrorMessage = "The {0} field is required")]
         [Display(Name = "Front Page")]
-        public IFormFile FrontImage { get; set; }
+        public IFormFile FrontPagee { get; set; }
+
 
         [Display(Name = "Download Url")]
-        public string? DownloadUrl { get; set; }
-
+        public IFormFile DownloadUrll { get; set; }
+        
+        [Display(Name = "Author")]
         public int AuthorId { get; set; }
         public Author? Author { get; set; }
 
@@ -38,12 +48,20 @@ namespace Bookstore.ViewModels
 
         public ICollection<UserBooks>? Buyers { get; set; }
 
+        public IEnumerable<int>? SelectedGenres { get; set; }
+        public IEnumerable<SelectListItem>? GenreList { get; set; }
+
+
         [NotMapped]
 
+        [Display(Name = "Average Rating")]
         public double Prosek
         {
             get
             {
+                if (Reviews == null)
+                    return 0;
+
                 double average = 0;
                 int i = 0;
                 if (Reviews != null)
@@ -54,10 +72,12 @@ namespace Bookstore.ViewModels
                         i++;
                     }
 
-                    return average / i;
+                    return Math.Round(average / i, 2);
                 }
                 return 0;
             }
         }
+
+       
     }
 }

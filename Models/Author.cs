@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
+using Bookstore.Models;
 
 namespace Bookstore.Models
 {
@@ -29,7 +30,17 @@ namespace Bookstore.Models
         public string? Gender { get; set; }
 
         public ICollection<Book>? Books { get; set; }
+
         [NotMapped]
+        public int Age
+        {
+            get
+            {
+                TimeSpan span = (TimeSpan)(DateTime.Now - BirthDate);
+                double years = (double)span.TotalDays / 365.2425;
+                return (int)years;
+            }
+        }
         public string FullName
         {
             get { return String.Format("{0} {1}", FirstName, LastName); }

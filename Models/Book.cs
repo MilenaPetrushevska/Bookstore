@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bookstore.Models;
 
 namespace Bookstore.Models
 {
@@ -25,11 +26,16 @@ namespace Bookstore.Models
         [StringLength(50)]
         public string? Publisher { get; set; }
 
+        
+
+        [Required(ErrorMessage = "The {0} field is required")]
         [Display(Name = "Front Page")]
         public string? FrontPage { get; set; }
 
+
         [Display(Name = "Download Url")]
         public string? DownloadUrl { get; set; }
+        
 
         [Display(Name = "Author")]
         public int AuthorId { get; set; }
@@ -61,26 +67,11 @@ namespace Bookstore.Models
                         i++;
                     }
 
-                  return  Math.Round(average/i, 2);
+                    return Math.Round(average / i, 2);
                 }
                 return 0;
             }
         }
 
-       // [NotMapped]
-      //  public virtual ICollection<int> SelectedGenreList { get; set; }
-
-        /*   public List<string> zanrovi
-           {
-               get
-               {
-                   List<string> optionList = new List<string>();
-                   foreach(var zanr in Genres)
-                   {
-                       optionList.Add(zanr.Genre.GenreName);
-                   }
-                   return optionList;
-               }
-           } */
     }
 }
