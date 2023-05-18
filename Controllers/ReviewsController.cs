@@ -31,8 +31,8 @@ namespace Bookstore.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> Index()
         {
-            var workshopImprovedContext = _context.Review.Include(r => r.Book);
-            return View(await workshopImprovedContext.ToListAsync());
+            var BookstoreContext = _context.Review.Include(r => r.Book);
+            return View(await BookstoreContext.ToListAsync());
         }
 
         // GET: Reviews/Details/5
@@ -60,91 +60,23 @@ namespace Bookstore.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Create()
         {
-            // ViewData["BookId"] = new SelectList(_context.UserBooks, "BookId");
-
-            var userBooksContext = _context.UserBooks.Include(s => s.Book);
-            var kupeniOdSite = from m in userBooksContext select m; //site zapisi od userBooks tabelata zemi gi
-            var kupeniOdKorisnikot = kupeniOdSite.Where(s => s.AppUser!.Equals(HttpContext.User.Identity.Name));
-            //kupeniOdKorsnikot se samo onie zapisi od userBooks cij sto kupec e logiraniot korisnik
-            var bookContext = _context.Book;
-            var knigi = from n in bookContext select n; //zemi gi site knigi sto postojat
-            var innerJoin = from n in knigi join m in kupeniOdKorisnikot on n.Id equals m.BookId select new { n };
-
-            //ArrayList lista = new ArrayList();
-
-            ArrayList lista = new ArrayList();
-            List<SelectListItem> selectlist = new List<SelectListItem>();
-
-            foreach (var iterator in innerJoin)
-            {
-                selectlist.Add(new SelectListItem { Text = iterator.n.Title, Value = iterator.n.Id.ToString() });
-
-            }
-
-            ViewBag.SelectList = selectlist;
-
-
-            //ViewData["BookId"] = new SelectList(lista, "Id", "Title");
-
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
             return View();
         }
 
         // POST: Reviews/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> Create([Bind("Id,BookId,AppUser,Comment,Rating")] Review review, string ddlname)
+        public async Task<IActionResult> Create([Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
         {
             if (ModelState.IsValid)
             {
-                //System.Security.Claims.ClaimsPrincipal currentUser = this.User;
-                //bool isAdmin = currentUser.IsInRole("User");
-                //var id = currentUser.; // Get user id:
-
-                review.AppUser = HttpContext.User.Identity.Name;
-
-
-
-                var userBooksContext = _context.UserBooks.Include(s => s.Book);
-                var kupeniOdSite = from m in userBooksContext select m; //site zapisi od userBooks tabelata zemi gi
-                var kupeniOdKorisnikot = kupeniOdSite.Where(s => s.AppUser!.Equals(HttpContext.User.Identity.Name));
-                //kupeniOdKorsnikot se samo onie zapisi od userBooks cij sto kupec e logiraniot korisnik
-                var bookContext = _context.Book;
-                var knigi = from n in bookContext select n; //zemi gi site knigi sto postojat
-                var innerJoin = from n in knigi join m in kupeniOdKorisnikot on n.Id equals m.BookId select new { n };
-
-                //ArrayList lista = new ArrayList();
-
-                ArrayList lista = new ArrayList();
-                List<SelectListItem> selectlist = new List<SelectListItem>();
-
-                foreach (var iterator in innerJoin)
-                {
-                    selectlist.Add(new SelectListItem { Text = iterator.n.Title, Value = iterator.n.Id.ToString() });
-
-                }
-
-                ViewBag.SelectList = selectlist;
-                review.BookId = Int16.Parse(ddlname);
-
-                // review.BookId = Convert.ToInt32(ViewBag.SelectList.selectedItem.value); 
-                // ViewData["BookId"] = new SelectList(innerJoin, "Id", "Title", review.BookId);
-
-
-
                 _context.Add(review);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-
-
-
-            //ViewData["BookId"] = new SelectList(lista, "Id", "Title", review.BookId);
-
-            // ViewData["BookId"] = new SelectList(query, "Id", "Title");
+            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
             return View(review);
         }
 
